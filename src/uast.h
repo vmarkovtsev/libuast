@@ -1,6 +1,10 @@
 #ifndef LUAST_SRC_NODE_API_H_
 #define LUAST_SRC_NODE_API_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "find-ctx.h"
 #include "node-iface.h"
 
@@ -54,5 +58,9 @@ node_iface node_api_get_iface(const node_api *api);
 // It returns 0 if the find query worked correctly, even if it returns 0
 // results.
 int node_api_find(node_api *api, find_ctx *ctx, void *node, const char *query);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
 
 #endif  // LUAST_SRC_NODE_API_H_
