@@ -2,15 +2,12 @@
 #include <stdlib.h>
 
 #include <libxml/parser.h>
-#include <libxml/tree.h>
 #include <libxml/xpath.h>
-#include <libxml/xpathInternals.h>
 
 #include "roles.h"
 #include "uast.h"
 #include "uast_private.h"
-
-#include "testing-tools.h"
+#include "function.h"
 
 #define GET(__NODE__, __PROP__, ...) \
   (api->iface.__PROP__(__NODE__, ##__VA_ARGS__))
@@ -25,8 +22,8 @@ struct _find_ctx {
   int cap;
 };
 
-static xmlDocPtr create_document(node_api *api, void *node);
-static xmlNodePtr create_xml_node(node_api *api, void *node, xmlNodePtr parent);
+static xmlDocPtr create_document(const node_api *api, const void *node);
+static xmlNodePtr create_xml_node(const node_api *api, const void *node, xmlNodePtr parent);
 
 //////////////////////////////
 ///////// PUBLIC API /////////
@@ -67,7 +64,7 @@ void free_node_api(node_api *api) {
 
 node_iface node_api_get_iface(const node_api *api) { return api->iface; }
 
-int node_api_find(node_api *api, find_ctx *ctx, void *node, const char *query) {
+int node_api_find(const node_api *api, find_ctx *ctx, const void *node, const char *query) {
   int ret = 0;
   xmlDocPtr doc = NULL;
   xmlXPathContextPtr xpathCtx = NULL;
@@ -138,7 +135,7 @@ int find_ctx_get_cap(const find_ctx *ctx) { return ctx->cap; }
 
 void **find_ctx_get_results(const find_ctx *ctx) { return ctx->results; }
 
-static xmlNodePtr create_xml_node(node_api *api, void *node,
+static xmlNodePtr create_xml_node(const node_api *api, const void *node,
                                   xmlNodePtr parent) {
   const char *internal_type = GET(node, internal_type);
   xmlNodePtr xmlNode = xmlNewNode(NULL, BAD_CAST(internal_type));
@@ -146,7 +143,7 @@ static xmlNodePtr create_xml_node(node_api *api, void *node,
     goto error;
   }
 
-  xmlNode->_private = node;
+  xmlNode->_private = (void*)node;
   if (parent) {
     if (!xmlAddChild(parent, xmlNode)) {
       goto error;
@@ -188,7 +185,7 @@ error:
   return NULL;
 }
 
-static xmlDocPtr create_document(node_api *api, void *node) {
+static xmlDocPtr create_document(const node_api *api, const void *node) {
   xmlDocPtr doc = xmlNewDoc(BAD_CAST("1.0"));
   if (!doc) {
     return NULL;
@@ -200,4 +197,19 @@ static xmlDocPtr create_document(node_api *api, void *node) {
   }
   xmlDocSetRootElement(doc, xmlNode);
   return doc;
+}
+
+int node_api_list_functions(const node_api *api, const void *node, uast_function **listptr) {
+  // Breadth-first search through node_api(node)->children
+  // Filter by FUNCTION role
+  // We record the path in BFS and assign it to uast_function.scope
+  // We look into the properties of each found function node and extract line numbers
+  return 0;
+}
+
+void free_node_api_functions(uast_function *list, int size) {
+  for (int i = 0; i < size; i++) {
+    free(list[i].scope);
+  }
+  free(list);
 }

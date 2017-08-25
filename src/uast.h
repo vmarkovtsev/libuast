@@ -3,6 +3,7 @@
 
 #include "find-ctx.h"
 #include "node-iface.h"
+#include "function.h"
 
 // node_api stores all general context required for calling the libuast's api
 // It must be initialized with `new_node_api(node_iface)` passing a valid
@@ -27,7 +28,7 @@ void free_node_api(node_api *api);
 // Returns the node_iface used by the node_api
 node_iface node_api_get_iface(const node_api *api);
 
-// Returns the list of native root nodes that satisfy the xpath query.
+// Compiles the list of native root nodes that satisfy the xpath query.
 // It will return an empty vector if non node matches the query.
 //
 // A new find_ctx must be created with `new_find_ctx()` to store the results of
@@ -53,6 +54,15 @@ node_iface node_api_get_iface(const node_api *api);
 //
 // It returns 0 if the find query worked correctly, even if it returns 0
 // results.
-int node_api_find(node_api *api, find_ctx *ctx, void *node, const char *query);
+int node_api_find(const node_api *api, find_ctx *ctx, const void *node, const char *query);
+
+// Scans for "function" nodes in the given UAST root node.
+// TODO
+// *found is allocated inside.
+// It returns the number of functions found.
+int node_api_list_functions(const node_api *api, const void *node, uast_function **listptr);
+
+// Deallocates any memory used by the array of uast_functions.
+void free_node_api_functions(uast_function *list, int size);
 
 #endif  // LUAST_SRC_NODE_API_H_
