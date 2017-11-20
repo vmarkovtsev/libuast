@@ -1,12 +1,26 @@
 #include <cstdint>
 
 #include <iostream>
+#ifndef __has_include
+#define __has_include(x) 1
+#endif
+#if __has_include(<optional>)
 #include <optional>
+#else
+#include <experimental/optional>
+#endif
 #include <string>
 #include <tuple>
 #include <vector>
 
 #include "src/uast.h"
+
+#if !__has_include(<optional>)
+namespace std {
+template <typename T>
+using optional = experimental::optional<T>;
+}
+#endif
 
 struct position {
   uint32_t offset;
@@ -71,57 +85,57 @@ static const char *PropertyValueAt(const void *node, int index) {
 }
 
 static bool HasStartOffset(const void *node) {
-  return ((Node *)node)->start_position.has_value();
+  return static_cast<bool>(((Node *)node)->start_position);
 }
 
 static uint32_t StartOffset(const void *node) {
   std::optional<position> p = ((Node *)node)->start_position;
-  return p.has_value() ? p.value().offset : 0;
+  return p ? p.value().offset : 0;
 }
 
 static bool HasStartLine(const void *node) {
-  return ((Node *)node)->start_position.has_value();
+  return static_cast<bool>(((Node *)node)->start_position);
 }
 
 static uint32_t StartLine(const void *node) {
   std::optional<position> p = ((Node *)node)->start_position;
-  return p.has_value() ? p.value().line : 0;
+  return p ? p.value().line : 0;
 }
 
 static bool HasStartCol(const void *node) {
-  return ((Node *)node)->start_position.has_value();
+  return static_cast<bool>(((Node *)node)->start_position);
 }
 
 static uint32_t StartCol(const void *node) {
   std::optional<position> p = ((Node *)node)->start_position;
-  return p.has_value() ? p.value().col : 0;
+  return p ? p.value().col : 0;
 }
 
 static bool HasEndOffset(const void *node) {
-  return ((Node *)node)->end_position.has_value();
+  return static_cast<bool>(((Node *)node)->end_position);
 }
 
 static uint32_t EndOffset(const void *node) {
   std::optional<position> p = ((Node *)node)->end_position;
-  return p.has_value() ? p.value().offset : 0;
+  return p ? p.value().offset : 0;
 }
 
 static bool HasEndLine(const void *node) {
-  return ((Node *)node)->end_position.has_value();
+  return static_cast<bool>(((Node *)node)->end_position);
 }
 
 static uint32_t EndLine(const void *node) {
   std::optional<position> p = ((Node *)node)->end_position;
-  return p.has_value() ? p.value().line : 0;
+  return p ? p.value().line : 0;
 }
 
 static bool HasEndCol(const void *node) {
-  return ((Node *)node)->end_position.has_value();
+  return static_cast<bool>(((Node *)node)->end_position);
 }
 
 static uint32_t EndCol(const void *node) {
   std::optional<position> p = ((Node *)node)->end_position;
-  return p.has_value() ? p.value().col : 0;
+  return p ? p.value().col : 0;
 }
 
 int main(int argc, char **argv) {
