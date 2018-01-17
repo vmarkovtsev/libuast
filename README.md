@@ -28,7 +28,12 @@ sudo apt install build-essential cmake libxml2 libxml2-dev libcunit1 libcunit1-d
 
 ### Windows instructions
 
-[WINDOWS.md](WINDOWS.md)
+Download links for the latest Windows x86_64 binaries:
+
+* [MinGW](https://ci.appveyor.com/api/projects/mcuadros/libuast/artifacts/binaries.win64.mingw.zip?job=Environment:%20BUILD=mingw)
+* [MSVC++](https://ci.appveyor.com/api/projects/mcuadros/libuast/artifacts/binaries.win64.msvc.zip?job=Environment:%20BUILD=msvc)
+
+Building from source is described in [WINDOWS.md](WINDOWS.md).
 
 ### Build/Install C API
 
